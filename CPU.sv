@@ -28,12 +28,12 @@ module CPU(
    output IOBUS_WR
     );
 
-//Immediates
+//imms
 logic [31:0] Jtype,Btype, Itype, Utype, Stype;
 logic [31:0] jalr, branch, jal;
 
-//Memory
-logic [31:0] IR;   //from memory
+//mem
+logic [31:0] IR;   
 logic [31:0] MEM_DOUT2; 
 logic MEM_RDEN1;     //from CU_FSM  
 logic MEM_RDEN2;     //from CU_FSM  
@@ -128,7 +128,7 @@ IMMED_GEN imm (
     .Stype(Stype),
     .Jtype(Jtype),
     .Btype(Btype)
-);
+); 
 
 
 //PC MUX
@@ -203,9 +203,9 @@ Memory mem (
 //Decoder
 CU_DCDR cu_dcdr (
     .ir        (IR),         // full 32-bit instruction from Memory
-    .br_eq     (br_eq),      // from BCG
-    .br_lt     (br_lt),      // from BCG
-    .br_ltu    (br_ltu),     // from BCG
+  .br_eq     (br_eq),      // branches from BCG
+    .br_lt     (br_lt),     
+    .br_ltu    (br_ltu),    
 
     .alu_fun   (ALU_FUN),    // to ALU
     .alu_srcA  (ALU_SRC_A),  // to ALU A mux

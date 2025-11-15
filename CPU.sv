@@ -71,6 +71,7 @@ assign IOBUS_ADDR = ALU_RESULT;
 logic RF_WRITE;                 //from CU_FSM, also en
 logic [1:0] RF_WR_SEL;          //from decoder
 
+//regfile
 reg_file regfile (
     .CLK    (CLK),
     .RF_en  (RF_WRITE), //RF_en and RF_WRITE
@@ -93,7 +94,7 @@ always_comb begin
     endcase
 end
 
-
+//ALU
 ALU alu (.ALU_A(ALU_A), 
          .ALU_B(ALU_B), 
          .ALU_RESULT(ALU_RESULT), 
@@ -119,8 +120,7 @@ always_comb begin
     endcase
 end        
 
-
-
+//Immediate Generator 
 IMMED_GEN imm (
     .IR(IR),
     .Utype(Utype),
@@ -137,6 +137,7 @@ logic [31:0] PC_PLUS4;    // PC + 4
 
 assign PC_PLUS4 = PC + 32'd4;
 
+//PC
 PC pc (.CLK(CLK), 
        .PC_Din(PC_Din), 
        .PC_WRITE(PC_WRITE), 
@@ -179,7 +180,7 @@ BCG bcg(
     );
    
   
-
+//Memory file
 Memory mem (
     .MEM_CLK   (CLK),
     .MEM_RDEN1 (MEM_RDEN1),       

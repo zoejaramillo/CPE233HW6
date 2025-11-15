@@ -86,9 +86,9 @@ reg_file regfile (
 always_comb begin
     case (RF_WR_SEL)
         2'b00: RF_wd = PC_PLUS4;           // JAL writes PC+4
-        2'b01: RF_wd = CSR_REG;      // Not used → probably 0
-        2'b10: RF_wd = MEM_DOUT2;    // LW, LBU, LH, etc.
-        2'b11: RF_wd = ALU_RESULT;   // R-type, ADDI, SLTI, XORI...
+        2'b01: RF_wd = CSR_REG;     
+        2'b10: RF_wd = MEM_DOUT2;    
+        2'b11: RF_wd = ALU_RESULT;   
         default: RF_wd = ALU_RESULT;
     endcase
 end
@@ -102,8 +102,8 @@ ALU alu (.ALU_A(ALU_A),
 //ALU Source A MUX
 always_comb begin
     case (ALU_SRC_A)
-        1'b0: ALU_A = RF_rs1;   // normal ALU ops
-        1'b1: ALU_A = Utype;    // LUI uses U-type immediate
+        1'b0: ALU_A = RF_rs1;   
+        1'b1: ALU_A = Utype;   
         default: ALU_A = RF_rs1;
     endcase
 end
@@ -112,9 +112,9 @@ end
 always_comb begin
     case (ALU_SRC_B)
         2'b00: ALU_B = RF_rs2;   // R-type
-        2'b01: ALU_B = Itype;    // I-type (ADDI, LW base)
-        2'b10: ALU_B = Stype;    // S-type (store offset)
-        2'b11: ALU_B = PC;       // for AUIPC or JALR PC-relative ops
+        2'b01: ALU_B = Itype;    // I-type  
+        2'b10: ALU_B = Stype;    // S-type 
+        2'b11: ALU_B = PC;        
         default: ALU_B = RF_rs2;
     endcase
 end        
@@ -148,10 +148,10 @@ PC pc (.CLK(CLK),
 //PC Mux 
 always_comb begin
     case (PC_SOURCE)
-        2'b00: PC_Din = PC_PLUS4;   // normal sequential PC
-        2'b01: PC_Din = jalr;       // JALR
-        2'b10: PC_Din = branch;     // BEQ/BNE/etc.
-        2'b11: PC_Din = jal;        // JAL
+        2'b00: PC_Din = PC_PLUS4;   
+        2'b01: PC_Din = jalr;       
+        2'b10: PC_Din = branch;    
+        2'b11: PC_Din = jal;      
         default: PC_Din = PC_PLUS4;
     endcase
 end
@@ -182,36 +182,36 @@ BCG bcg(
 
 Memory mem (
     .MEM_CLK   (CLK),
-    .MEM_RDEN1 (MEM_RDEN1),        // instruction read enable
-    .MEM_RDEN2 (MEM_RDEN2),        // data read enable
-    .MEM_WE2   (MEM_WE2),          // store enable
+    .MEM_RDEN1 (MEM_RDEN1),       
+   .MEM_RDEN2 (MEM_RDEN2),      
+    .MEM_WE2   (MEM_WE2),          
 
-    .MEM_ADDR1 (PC[15:2]),         // instruction address = PC >> 2
-    .MEM_ADDR2 (ALU_RESULT),       // load/store address
-    .MEM_DIN2  (RF_rs2),           // store data = RS2
+    .MEM_ADDR1 (PC[15:2]),        
+    .MEM_ADDR2 (ALU_RESULT),       
+    .MEM_DIN2  (RF_rs2),          
 
-    .MEM_SIZE  (IR[13:12]), // funct3 controls byte/half/word
-    .MEM_SIGN  (IR[14]),    // sign/zero extend
+    .MEM_SIZE  (IR[13:12]), 
+    .MEM_SIGN  (IR[14]),   
 
-    .IO_IN     (IOBUS_IN),         // external IO input
-    .IO_WR     (IOBUS_WR),         // external IO write indicator
+    .IO_IN     (IOBUS_IN),        
+    .IO_WR     (IOBUS_WR),        
 
-    .MEM_DOUT1 (IR),      // instruction out
-    .MEM_DOUT2 (MEM_DOUT2)         // load data out
+    .MEM_DOUT1 (IR),     
+    .MEM_DOUT2 (MEM_DOUT2)        
 );
 
 //Decoder
 CU_DCDR cu_dcdr (
-    .ir        (IR),         // full 32-bit instruction from Memory
-  .br_eq     (br_eq),      // branches from BCG
+    .ir        (IR),       
+  .br_eq     (br_eq),      
     .br_lt     (br_lt),     
     .br_ltu    (br_ltu),    
 
-    .alu_fun   (ALU_FUN),    // to ALU
-    .alu_srcA  (ALU_SRC_A),  // to ALU A mux
-    .alu_srcB  (ALU_SRC_B),  // to ALU B mux
-    .pcSource  (PC_SOURCE),  // to PC mux
-    .rf_wr_sel (RF_WR_SEL)   // to RF writeback mux
+    .alu_fun   (ALU_FUN),   
+    .alu_srcA  (ALU_SRC_A), 
+    .alu_srcB  (ALU_SRC_B),  
+    .pcSource  (PC_SOURCE), 
+    .rf_wr_sel (RF_WR_SEL)   
 );
 
 //FSM
